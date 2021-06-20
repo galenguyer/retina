@@ -1,3 +1,5 @@
 services:
 - name: google
   url: https://google.com
+- name: bing
+  url: https://bing.com

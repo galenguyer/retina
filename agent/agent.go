@@ -1,7 +1,6 @@
 package agent
 
 import (
-	"encoding/json"
 	"log"
 	"strings"
 	"sync"
@@ -10,6 +9,7 @@ import (
 	"github.com/galenguyer/retina/client"
 	"github.com/galenguyer/retina/config"
 	"github.com/galenguyer/retina/core"
+	"github.com/galenguyer/retina/storage"
 )
 
 var (
@@ -35,11 +35,11 @@ func monitor(service core.Service) {
 		} else {
 			log.Print("[ERROR][agent] invalid address", service.URL)
 		}
-
-		js, _ := json.Marshal(result)
-		log.Println(string(js))
-
 		lock.Unlock()
+
+		result.ServiceName = service.Name
+
+		storage.InsertResult(result)
 
 		time.Sleep(5 * time.Second)
 	}

@@ -9,11 +9,14 @@ import (
 
 	"github.com/galenguyer/retina/agent"
 	"github.com/galenguyer/retina/config"
+	"github.com/galenguyer/retina/storage"
 	"gopkg.in/yaml.v2"
 )
 
 func main() {
 	conf, _ := loadConfig()
+
+	storage.CreateDatabase()
 
 	agent.Start(conf)
 	signalChannel := make(chan os.Signal, 1)
