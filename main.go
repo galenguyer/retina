@@ -1,5 +1,15 @@
-package retina
+package main
+
+import (
+	"fmt"
+
+	"rsc.io/quote"
+)
+
+func main() {
+	fmt.Println(Hello())
+}
 
 func Hello() string {
-	return "Hello, world."
+	return quote.Hello()
 }

@@ -1,4 +1,4 @@
-package retina
+package main
 
 import "testing"
 
