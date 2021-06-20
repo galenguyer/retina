@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	conf := loadConfig()
+	conf, _ := loadConfig()
 
 	agent.Start(conf)
 	signalChannel := make(chan os.Signal, 1)
@@ -28,17 +28,17 @@ func main() {
 	log.Println("Shutting down")
 }
 
-func loadConfig() *config.Config {
+func loadConfig() (conf *config.Config, err error) {
 	customConfigFile := os.Getenv("RETINA_CONFIG_FILE")
 	if len(customConfigFile) > 0 {
+		conf, err = config.Load(customConfigFile)
 	} else {
-		conf, err := config.Load("./config.yaml")
-		if err != nil {
-			log.Fatal(err)
-		}
-		y, _ := yaml.Marshal(conf)
-		fmt.Println(string(y))
-		return conf
+		conf, err = config.Load("./config.yaml")
 	}
-	return nil
+	if err != nil {
+		log.Fatal(err)
+	}
+	y, _ := yaml.Marshal(conf)
+	fmt.Println(string(y))
+	return conf, nil
 }
