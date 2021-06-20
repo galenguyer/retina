@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/galenguyer/retina/core"
@@ -37,15 +36,16 @@ func InsertResult(res *core.Result) {
 	if err != nil {
 		log.Panic(err)
 	}
-	statement.Exec(res.ServiceName, res.Timestamp.Unix(), res.HTTPStatusCode, res.Duration.Milliseconds(), (res.CertificateExpiry.Milliseconds() / 1000))
+	statement.Exec(res.ServiceName, res.Timestamp.Unix(), res.HTTPStatusCode, res.Duration.Milliseconds(), (res.CertificateExpiry.Milliseconds()))
 	js, _ := json.Marshal(res)
 	log.Println("inserting", string(js))
+}
 
-	rows, err := db.Query("SELECT * FROM results;")
+func GetLastHour() (results []*core.Result) {
+	rows, err := db.Query("SELECT * FROM results WHERE DATETIME(results.timestamp, 'unixepoch') > DATETIME('now','-1 hour');")
 	if err != nil {
 		log.Panic(err)
 	}
-	defer rows.Close()
 
 	for rows.Next() {
 		var id int
@@ -58,6 +58,14 @@ func InsertResult(res *core.Result) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println(strconv.Itoa(id)+":", name, timestamp, statuscode, duration, certexpiry)
+
+		results = append(results, &core.Result{
+			ServiceName:       name,
+			Timestamp:         timestamp,
+			HTTPStatusCode:    statuscode,
+			Duration:          time.Duration(duration),
+			CertificateExpiry: time.Duration(certexpiry),
+		})
 	}
+	return results
 }

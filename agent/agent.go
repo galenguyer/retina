@@ -41,6 +41,6 @@ func monitor(service core.Service) {
 
 		storage.InsertResult(result)
 
-		time.Sleep(5 * time.Second)
+		time.Sleep(30 * time.Second)
 	}
 }

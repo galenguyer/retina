@@ -3,3 +3,5 @@ services:
   url: https://google.com
 - name: bing
   url: https://bing.com
+- name: fake
+  url: https://veryfakedomain.notatld

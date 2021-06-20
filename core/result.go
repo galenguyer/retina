@@ -9,4 +9,5 @@ type Result struct {
 	HTTPStatusCode    int           `json:"httpstatuscode"`
 	Duration          time.Duration `json:"duration"`
 	CertificateExpiry time.Duration `json:"certificateexpiry"`
+	Success           bool          `json:"success"`
 }

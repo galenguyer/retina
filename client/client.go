@@ -24,7 +24,13 @@ func PerformHTTPSCheck(address string) *core.Result {
 	start := time.Now()
 	resp, err := http.Get(address)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		result := &core.Result{
+			Timestamp: start,
+			URL:       address,
+			Success:   false,
+		}
+		return result
 	}
 	duration := time.Since(start)
 
@@ -33,6 +39,8 @@ func PerformHTTPSCheck(address string) *core.Result {
 		Duration:          duration,
 		Timestamp:         start,
 		URL:               address,
-		CertificateExpiry: time.Until(resp.TLS.PeerCertificates[0].NotAfter)}
+		CertificateExpiry: time.Until(resp.TLS.PeerCertificates[0].NotAfter),
+		Success:           resp.StatusCode < 400,
+	}
 	return result
 }
