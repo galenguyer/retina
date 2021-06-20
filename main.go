@@ -1,15 +1,24 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
-	"rsc.io/quote"
+	"github.com/galenguyer/retina/agent"
 )
 
 func main() {
-	fmt.Println(Hello())
-}
-
-func Hello() string {
-	return quote.Hello()
+	agent.Start()
+	signalChannel := make(chan os.Signal, 1)
+	done := make(chan bool, 1)
+	signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-signalChannel
+		log.Println("Received termination signal, attempting to gracefully shut down")
+		done <- true
+	}()
+	<-done
+	log.Println("Shutting down")
 }
