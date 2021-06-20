@@ -33,6 +33,6 @@ func PerformHTTPSCheck(address string) *core.Result {
 		Duration:          duration,
 		Timestamp:         start,
 		URL:               address,
-		CertificateExpiry: time.Duration(time.Until(resp.TLS.PeerCertificates[0].NotAfter).Seconds())}
+		CertificateExpiry: time.Until(resp.TLS.PeerCertificates[0].NotAfter)}
 	return result
 }
