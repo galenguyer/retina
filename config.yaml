@@ -1,0 +1,3 @@
+services:
+  - name: google
+    url: https://google.com
