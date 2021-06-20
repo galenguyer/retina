@@ -3,10 +3,12 @@ package agent
 import (
 	"encoding/json"
 	"log"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/galenguyer/retina/client"
+	"github.com/galenguyer/retina/core"
 )
 
 var (
@@ -24,10 +26,21 @@ func Start() {
 func monitor(service string) {
 	for {
 		lock.Lock()
-		result := client.CheckWebsite(service)
+
+		result := &core.Result{}
+		if strings.HasPrefix(service, "https://") {
+			result = client.PerformHTTPSCheck(service)
+		} else if strings.HasPrefix(service, "http://") {
+			result = client.PerformHTTPCheck(service)
+		} else {
+			log.Print("[ERROR][agent] invalid address", service)
+		}
+
 		js, _ := json.Marshal(result)
 		log.Println(string(js))
+
 		lock.Unlock()
+
 		time.Sleep(5 * time.Second)
 	}
 }
