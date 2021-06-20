@@ -5,9 +5,11 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/galenguyer/retina/core"
 )
 
-func CheckWebsite(address string) {
+func CheckWebsite(address string) *core.Result {
 	start := time.Now()
 	resp, err := http.Get(address)
 	if err != nil {
@@ -15,11 +17,9 @@ func CheckWebsite(address string) {
 	}
 	duration := time.Since(start)
 
-	if strings.HasPrefix(address, "http://") {
-		log.Println("site:", address, "time:", duration, "status:", resp.StatusCode, "cert: none")
-
-	} else {
-		log.Println("site:", address, "time:", duration, "status:", resp.StatusCode, "cert:", time.Until(resp.TLS.PeerCertificates[0].NotAfter))
-
+	result := &core.Result{HTTPStatusCode: resp.StatusCode, Duration: duration, Timestamp: start, URL: address}
+	if strings.HasPrefix(address, "https://") {
+		// cert expiration check here
 	}
+	return result
 }

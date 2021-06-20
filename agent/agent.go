@@ -1,6 +1,8 @@
 package agent
 
 import (
+	"encoding/json"
+	"log"
 	"sync"
 	"time"
 
@@ -14,15 +16,17 @@ var (
 func Start() {
 	services := []string{"https://example.com", "http://neverssl.com"}
 	for _, service := range services {
-		time.Sleep(100 * time.Millisecond)
 		go monitor(service)
+		time.Sleep(1 * time.Second)
 	}
 }
 
 func monitor(service string) {
 	for {
 		lock.Lock()
-		client.CheckWebsite(service)
+		result := client.CheckWebsite(service)
+		js, _ := json.Marshal(result)
+		log.Println(string(js))
 		lock.Unlock()
 		time.Sleep(5 * time.Second)
 	}
