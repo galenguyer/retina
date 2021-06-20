@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/galenguyer/retina/client"
+	"github.com/galenguyer/retina/config"
 	"github.com/galenguyer/retina/core"
 )
 
@@ -15,25 +16,24 @@ var (
 	lock sync.Mutex
 )
 
-func Start() {
-	services := []string{"https://example.com", "http://neverssl.com"}
-	for _, service := range services {
+func Start(config *config.Config) {
+	for _, service := range config.Services {
 		go monitor(service)
 		time.Sleep(1 * time.Second)
 	}
 }
 
-func monitor(service string) {
+func monitor(service core.Service) {
 	for {
 		lock.Lock()
 
 		result := &core.Result{}
-		if strings.HasPrefix(service, "https://") {
-			result = client.PerformHTTPSCheck(service)
-		} else if strings.HasPrefix(service, "http://") {
-			result = client.PerformHTTPCheck(service)
+		if strings.HasPrefix(service.URL, "https://") {
+			result = client.PerformHTTPSCheck(service.URL)
+		} else if strings.HasPrefix(service.URL, "http://") {
+			result = client.PerformHTTPCheck(service.URL)
 		} else {
-			log.Print("[ERROR][agent] invalid address", service)
+			log.Print("[ERROR][agent] invalid address", service.URL)
 		}
 
 		js, _ := json.Marshal(result)

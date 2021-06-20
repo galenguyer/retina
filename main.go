@@ -14,9 +14,8 @@ import (
 
 func main() {
 	conf := loadConfig()
-	_ = conf
 
-	agent.Start()
+	agent.Start(conf)
 	signalChannel := make(chan os.Signal, 1)
 	done := make(chan bool, 1)
 	signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM)
@@ -39,6 +38,7 @@ func loadConfig() *config.Config {
 		}
 		y, _ := yaml.Marshal(conf)
 		fmt.Println(string(y))
+		return conf
 	}
 	return nil
 }
