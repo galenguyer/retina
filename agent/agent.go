@@ -1,9 +1,10 @@
 package agent
 
 import (
-	"fmt"
 	"sync"
 	"time"
+
+	"github.com/galenguyer/retina/client"
 )
 
 var (
@@ -21,7 +22,7 @@ func Start() {
 func monitor(service string) {
 	for {
 		lock.Lock()
-		fmt.Println("pinging", service)
+		client.CheckWebsite(service)
 		lock.Unlock()
 		time.Sleep(5 * time.Second)
 	}
