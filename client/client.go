@@ -3,6 +3,7 @@ package client
 import (
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -14,5 +15,11 @@ func CheckWebsite(address string) {
 	}
 	duration := time.Since(start)
 
-	log.Println("site:", address, "time:", duration, "status:", resp.StatusCode)
+	if strings.HasPrefix(address, "http://") {
+		log.Println("site:", address, "time:", duration, "status:", resp.StatusCode, "cert: none")
+
+	} else {
+		log.Println("site:", address, "time:", duration, "status:", resp.StatusCode, "cert:", time.Until(resp.TLS.PeerCertificates[0].NotAfter))
+
+	}
 }
