@@ -4,18 +4,23 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import useSWR from "swr";
 import "./App.css";
 import ms from "ms";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import "./Graph.css"
 
 const Graph = (props) => {
     const statuses = props.statuses,
         service = props.service;
+
+    const isSmallScreen = useMediaQuery("(max-width: 500px)");
+
     return (
         <div>
             <h2>
                 {service} ({getUptime(statuses)}% uptime)
             </h2>
-            <ResponsiveContainer height={250} width="80%">
+            <ResponsiveContainer height={180} width="80%">
                 <LineChart data={statuses}>
-                    <YAxis unit="ms" width={80} />
+                    <YAxis unit="ms" width={80} hide={isSmallScreen} />
                     <XAxis
                         tickFormatter={formatXTick}
                         type="number"

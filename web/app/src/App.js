@@ -40,14 +40,25 @@ function App() {
         });
     });
 
+    pingtimes = sortObj(pingtimes);
+
     return (
         <div className="App">
-            <h1>bad graph time</h1>
+            <h1>Retina</h1>
             {Object.keys(pingtimes).map((service) => {
                 return <Graph service={service} statuses={pingtimes[service]} />;
             })}
         </div>
     );
+}
+
+function sortObj(obj) {
+    return Object.keys(obj)
+        .sort()
+        .reduce(function (result, key) {
+            result[key] = obj[key];
+            return result;
+        }, {});
 }
 
 export default App;
