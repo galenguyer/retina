@@ -20,7 +20,8 @@ func CreateDatabase() {
 	statement, err := db.Prepare(`CREATE TABLE IF NOT EXISTS results (
 			id INTEGER PRIMARY KEY, 
 			name TEXT, 
-			timestamp DATETIME, 
+			timestamp DATETIME,
+			success BOOLEAN,
 			statuscode INTEGER, 
 			duration INTEGER,
 			certexpiry INTEGER
@@ -32,11 +33,11 @@ func CreateDatabase() {
 }
 
 func InsertResult(res *core.Result) {
-	statement, err := db.Prepare("INSERT INTO results (name, timestamp, statuscode, duration, certexpiry) VALUES (?, ?, ?, ?, ?);")
+	statement, err := db.Prepare("INSERT INTO results (name, timestamp, success, statuscode, duration, certexpiry) VALUES (?, ?, ?, ?, ?, ?);")
 	if err != nil {
 		log.Panic(err)
 	}
-	statement.Exec(res.ServiceName, res.Timestamp.Unix(), res.HTTPStatusCode, res.Duration.Milliseconds(), (res.CertificateExpiry.Milliseconds()))
+	statement.Exec(res.ServiceName, res.Timestamp.Unix(), res.Success, res.HTTPStatusCode, res.Duration.Milliseconds(), (res.CertificateExpiry.Milliseconds()))
 	js, _ := json.Marshal(res)
 	log.Println("inserting", string(js))
 }
@@ -51,10 +52,11 @@ func GetLastHour() (results []*core.Result) {
 		var id int
 		var name string
 		var timestamp time.Time
+		var success bool
 		var statuscode int
 		var duration int
 		var certexpiry int
-		err = rows.Scan(&id, &name, &timestamp, &statuscode, &duration, &certexpiry)
+		err = rows.Scan(&id, &name, &timestamp, &success, &statuscode, &duration, &certexpiry)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -62,6 +64,7 @@ func GetLastHour() (results []*core.Result) {
 		results = append(results, &core.Result{
 			ServiceName:       name,
 			Timestamp:         timestamp,
+			Success:           success,
 			HTTPStatusCode:    statuscode,
 			Duration:          time.Duration(duration),
 			CertificateExpiry: time.Duration(certexpiry),

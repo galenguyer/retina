@@ -5,3 +5,5 @@ services:
   url: https://bing.com
 - name: fake
   url: https://veryfakedomain.notatld
+- name: badcert
+  url: https://badcert.galenguyer.com

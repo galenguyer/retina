@@ -10,7 +10,11 @@ import (
 
 func PerformHTTPCheck(address string) *core.Result {
 	start := time.Now()
-	resp, err := http.Get(address)
+	httpClient := &http.Client{
+		Timeout: time.Duration(5 * time.Second),
+	}
+
+	resp, err := httpClient.Get(address)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -22,7 +26,11 @@ func PerformHTTPCheck(address string) *core.Result {
 
 func PerformHTTPSCheck(address string) *core.Result {
 	start := time.Now()
-	resp, err := http.Get(address)
+	httpClient := &http.Client{
+		Timeout: time.Duration(5 * time.Second),
+	}
+
+	resp, err := httpClient.Get(address)
 	if err != nil {
 		log.Println(err)
 		result := &core.Result{

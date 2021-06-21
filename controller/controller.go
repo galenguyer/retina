@@ -10,7 +10,7 @@ import (
 )
 
 func StartServer() {
-	fileServer := http.FileServer(http.Dir("./web/static/"))
+	fileServer := http.FileServer(http.Dir("./web/app/build/"))
 	http.HandleFunc("/api/v1/hour", GetLastHour)
 	http.Handle("/", http.StripPrefix(strings.TrimRight("/", "/"), fileServer))
 	log.Println("starting webserver on port 8000")
