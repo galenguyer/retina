@@ -33,17 +33,18 @@ function App() {
             pingtimes[point.servicename] = []
         }
         sorted[point.servicename].push(point)
-        pingtimes[point.servicename].push({ timestamp: Number(new Date(point.timestamp)), duration: point.duration > 0 ? point.duration : null })
+        pingtimes[point.servicename].push({ timestamp: Number(new Date(point.timestamp)), duration: point.success ? point.duration : null })
     });
-    console.log(sorted)
-    console.log(pingtimes["google"])
 
+    const service = "google";
 
     return (
         <div className="App">
             <h1>bad graph time</h1>
-            <ResponsiveContainer height={250} width="80%">
-                <LineChart data={pingtimes["google"]}>
+            <div>
+            <h2>{service} ({getUptime(pingtimes[service])}% uptime)</h2>
+            <ResponsiveContainer height={250} width="80%" >
+                <LineChart data={pingtimes[service]}>
                     <YAxis
                         unit="ms"
                         width={80}
@@ -61,13 +62,23 @@ function App() {
                     <Tooltip content={CustomTooltip} cursor={false} />
                 </LineChart>
             </ResponsiveContainer>
-
+            </div>
         </div>
     );
 }
 
+function getUptime(statuses) {
+    let up = 0, total = 0;
+    statuses.forEach(status => {
+        total++;
+        if (status.duration != null) {
+            up++;
+        }
+    })
+    return Math.round(up*100/total);
+}
+
 function formatXTick(ts) {
-    console.log(ts)
     return ms(ts - Date.now())
 }
 
