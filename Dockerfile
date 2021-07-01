@@ -4,12 +4,12 @@ WORKDIR /app
 COPY . ./
 RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o retina .
 
-FROM node:14 AS react
+FROM node:16 AS react
 WORKDIR /usr/src/app
 COPY ./web/app/package.json ./
 RUN npm install
-COPY ./web/app ./
-RUN npm build
+COPY ./web/app/ ./
+RUN npm run build
 
 FROM alpine:latest
 COPY --from=retina /app/retina .
